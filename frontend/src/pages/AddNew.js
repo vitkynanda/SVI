@@ -4,7 +4,7 @@ import AddNewPost from "../components/AddNewPost";
 
 const AddNew = () => {
   return (
-    <div className="flex-grow">
+    <div className="w-5/6">
       <Header title="Add New Post" />
       <AddNewPost />
     </div>

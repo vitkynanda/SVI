@@ -4,7 +4,7 @@ import { TabMenu } from "../components/AllPosts";
 
 const AllPosts = () => {
   return (
-    <div className="flex-grow">
+    <div className="w-5/6">
       <Header title="All Posts" />
       <TabMenu />
     </div>

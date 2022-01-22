@@ -30,7 +30,9 @@ const LatestPostList = () => {
               className="hover:scale-105 transition-all duration-300 flex flex-col shadow-md text-gray-700 p-3 rounded-md items-start space-y-2"
             >
               <p className="font-semibold">{postData.title}</p>
-              <p className="text-sm">{postData.content}</p>
+              <p className="text-sm break-all line-clamp-3">
+                {postData.content}
+              </p>
               <div className="flex items-center justify-between text-xs w-full">
                 <p
                   className={`${

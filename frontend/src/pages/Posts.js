@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Posts = () => {
   const navigate = useNavigate();
   return (
-    <div className="flex-grow">
+    <div className="w-5/6">
       <Header title="Posts" />
       <div className="grid grid-cols-3 gap-10 p-5">
         <div

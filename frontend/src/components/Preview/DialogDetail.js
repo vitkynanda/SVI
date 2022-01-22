@@ -43,7 +43,10 @@ export default function DialogDetail({ data }) {
       >
         <DialogTitle>{data?.title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
+          <DialogContentText
+            id="alert-dialog-slide-description"
+            className="break-all"
+          >
             {data?.content}
           </DialogContentText>
           <div className="w-96 mt-2">{formatFullDate(data?.created_date)}</div>

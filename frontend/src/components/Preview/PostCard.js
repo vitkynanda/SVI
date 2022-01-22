@@ -28,7 +28,11 @@ export default function PostCard({ data }) {
         subheader={formatFullDate(data.created_date)}
       />
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          className="break-all line-clamp-3"
+        >
           {data.content}
         </Typography>
       </CardContent>
