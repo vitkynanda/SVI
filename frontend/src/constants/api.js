@@ -37,7 +37,8 @@ export const getAllArticle = async (params) => {
 
 export const deleteArticleById = async (id) => {
   const response = await fetch(`http://localhost:11000/article/${id}/delete`, {
-    method: "DELETE",
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
   });
   return response.json();
 };
