@@ -164,8 +164,8 @@ export default function Layout({ children, title }) {
           </DrawerHeader>
           <Divider />
           <List>
-            {routes?.map((route) => (
-              <Items route={route} />
+            {routes?.map((route, id) => (
+              <Items route={route} key={id} />
             ))}
           </List>
         </div>

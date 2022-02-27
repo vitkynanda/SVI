@@ -2,16 +2,16 @@ import React from "react";
 import Layout from "../components/Layout";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { getAllArticle } from "../constants/api";
+import { getArticleByPage } from "../constants/api";
 import PostCard from "../components/Preview/PostCard";
 
 const Preview = () => {
   const [params, setParams] = useState({
-    limit: 5,
+    limit: 1,
     page: 1,
   });
-  const { data, isLoading } = useQuery(["getAllArtilce", params.page], () =>
-    getAllArticle(params)
+  const { data, isLoading } = useQuery(["getArticlePage", params.page], () =>
+    getArticleByPage(params)
   );
 
   const renderLoading = isLoading ? (
@@ -59,12 +59,10 @@ const Preview = () => {
             </button>
           </div>
         </div>
-        <div className="grid gap-5 grid-cols-4">
-          {data?.data
-            ?.filter((postData) => postData.status === "Published")
-            .map((post) => (
-              <PostCard data={post} />
-            ))}
+        <div className="grid gap-5">
+          {data?.data?.map((post, id) => (
+            <PostCard data={post} key={id} />
+          ))}
         </div>
       </div>
     </Layout>

@@ -17,7 +17,7 @@ import DialogDetail from "./DialogDetail";
 
 export default function PostCard({ data }) {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 700 }}>
       <CardHeader
         action={
           <IconButton aria-label="settings">

@@ -30,6 +30,16 @@ export const getAllArticle = async (params) => {
   });
   return response.json();
 };
+export const getArticleByPage = async (params) => {
+  const { page, limit } = params;
+  const response = await fetch(
+    `http://localhost:8080/articles/${page}/${limit}`,
+    {
+      method: "GET",
+    }
+  );
+  return response.json();
+};
 
 export const deleteArticleById = async (id) => {
   const response = await fetch(`http://localhost:8080/article/${id}`, {

@@ -15,7 +15,7 @@ const routes = [
     subroutes: [
       { name: "All Posts", path: "/posts/all-post" },
       { name: "Add New", path: "/posts/add-new" },
-      { name: "Preview", path: "/ posts/preview" },
+      { name: "Preview", path: "/posts/preview" },
     ],
   },
 ];
