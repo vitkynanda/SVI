@@ -1,31 +1,23 @@
 package routes
 
 import (
-	"log"
-	"net/http"
+	"go-api/controllers"
 
-	"post-api/controllers"
-
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
-func HandleRequest() {
-    myRouter := mux.NewRouter().StrictSlash(true)
-    
-    myRouter.HandleFunc("/article/{limit}/{offset}", controllers.GetAllArticle).Methods("GET", "OPTIONS")
-    myRouter.HandleFunc("/article", controllers.CreateArticle).Methods("POST", "OPTIONS")
-    myRouter.HandleFunc("/article/{id}", controllers.GetArticleById).Methods("GET", "OPTIONS")
-    myRouter.HandleFunc("/article/{id}", controllers.UpdateArticle).Methods("POST", "OPTIONS")
-    myRouter.HandleFunc("/article/{id}/delete", controllers.DeleteArticle).Methods("POST", "OPTIONS")
-    
-    cors := handlers.CORS(
-		handlers.AllowedHeaders([]string{"content-type"}),
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowCredentials(),
-	)
+func HandlerRequest() {
+	router := gin.Default()
 
-	myRouter.Use(cors)
+	router.Use(cors.Default())
 
-    log.Fatal(http.ListenAndServe(":11000", myRouter))
+	router.GET("/articles", controllers.GetAllArticles )
+	router.GET("/articles/:page/:limit", controllers.PaginationPostedArticle )
+	router.GET("/article/:id", controllers.GetArticleById )
+	router.POST("/article", controllers.CreateNewArticle )	
+	router.PUT("/article/:id", controllers.UpdateArticle )
+	router.DELETE("/article/:id", controllers.DeleteArticleById )
+
+	router.Run(":8080")
 }

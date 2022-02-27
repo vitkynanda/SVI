@@ -1,126 +1,130 @@
 package controllers
 
 import (
-	"encoding/json"
+	"fmt"
+	"go-api/connection"
+	"go-api/models"
 	"net/http"
-	"post-api/connection"
-	"post-api/models"
 	"strconv"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
-var Response map[string]interface{} = make(map[string]interface{})
-
-func GetAllArticle(w http.ResponseWriter, r *http.Request) {
-	Var := mux.Vars(r)
-	offset, _ := strconv.Atoi(Var["offset"])
-	limit, _ := strconv.Atoi(Var["limit"])
-
+func GetAllArticles(c *gin.Context) {
 	articles := []models.Article{}
-	err := connection.DB.Find(&articles).Limit(limit).Offset(offset).Error
-
+	err := connection.DB.Find(&articles).Error
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		c.JSON(http.StatusInternalServerError, gin.H{"message" : "Internal server error"})
 	}
-	
-	Response["data"] = articles
-	Response["status_code"] = 200
-	Response["message"] = "Get All Article Successfully!"
-	
-	json.NewEncoder(w).Encode(Response)
-	return
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Get all articles successfully", "data": articles})
 }
 
-func CreateArticle(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	payload := models.Article{
+func PaginationPostedArticle(c *gin.Context) {
+	page, _ := strconv.Atoi(c.Param("page"))
+	limit, _ :=  strconv.Atoi(c.Param("limit"))
+
+	offset := (page-1) *limit
+
+	articles := []models.Article{}
+	
+	sql := "SELECT * FROM articles"
+	if page == 1 {
+		sql = fmt.Sprintf("%s LIMIT %d", sql, limit)
+	} else {
+		sql = fmt.Sprintf("%s LIMIT %d , %d", sql, limit ,offset)
+	}
+
+	fmt.Println(sql)
+
+
+
+	if err := connection.DB.Raw(sql).Scan(&articles).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "Internal Server Error", "errors": "Failed to find article"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Get article page successfully",  "data": articles})
+}
+
+func GetArticleById(c *gin.Context) {
+	id := c.Param("id")
+	article := models.Article{}
+	err := connection.DB.Where("id = ?", id).Find(&article).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message" : "Internal server error"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Get article by id successfully", "data" : article})
+}
+
+func CreateNewArticle(c *gin.Context) {
+
+	article := models.Article{
 		Created_date: time.Now(),
 		Updated_date: time.Now(),
 	}
 	
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	if err := c.ShouldBindJSON(&article); err != nil {
 
-	if err := connection.DB.Create(&payload).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	Response["data"] = payload
-	Response["status_code"] = 200
-	Response["message"] = "Article has been created successfuly!"
-
-	json.NewEncoder(w).Encode(Response)
-}
-
-func GetArticleById(w http.ResponseWriter, r *http.Request) {
-	Var := mux.Vars(r)	
-	id, _ := strconv.Atoi(Var["id"])
-
-	article := models.Article{}
-	err := connection.DB.Where("id = ?", id).Find(&article).Error
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	Response["data"] = article
-	Response["status_code"] = 200
-	Response["message"] = "Get Article Successfully!"
+	errorMessages :=  []string{}
 	
-	json.NewEncoder(w).Encode(Response)
-	return
+	for _, e :=  range err.(validator.ValidationErrors) {
+		errorMessage := fmt.Sprintf("Error on Filled %s, condition: %s", e.Field(), e.ActualTag())
+		errorMessages = append(errorMessages,  errorMessage)
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad request", "errors": errorMessages})
+		return
+	}
+
+	if errDB := connection.DB.Create(&article).Error; errDB != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "Internal Server Error", "errors": "Failed create article"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Create article  successfully",  "data" : article})
 }
 
-func UpdateArticle(w http.ResponseWriter, r *http.Request) {
-	Var := mux.Vars(r)	
-	id, _ := strconv.Atoi(Var["id"])
+func UpdateArticle(c *gin.Context) {
 
-	decoder := json.NewDecoder(r.Body)
-	payload := models.Article{
+	id := c.Param("id")
+
+	article := models.Article{
 		Updated_date: time.Now(),
 	}
-	
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+	if err := c.ShouldBindJSON(&article); err != nil {
+	errorMessages :=  []string{}
+	for _, e :=  range err.(validator.ValidationErrors) {
+		errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
+		errorMessages = append(errorMessages,  errorMessage)
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "bad request", "errors": errorMessages})
 		return
 	}
 
-	if err := connection.DB.Model(&models.Article{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"title": payload.Title,
-		"content": payload.Content,
-		"category": payload.Category,
-		"updated_date": payload.Updated_date,
-		"status": payload.Status,
-	}).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if errDB := connection.DB.Model(&models.Article{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"title": article.Title,
+		"content": article.Content,
+		"category": article.Category,
+		"updated_date": article.Updated_date,
+		"status": article.Status,
+	}).Error; errDB != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "Internal Server Error", "errors": "Failed update   article"})
 		return
 	}
 
-	Response["data"] = payload
-	Response["status_code"] = 200
-	Response["message"] = "Article has been updated successfuly!"
-
-	json.NewEncoder(w).Encode(Response)
-	return
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Update article  successfully",  "data" : article})
 }
 
-func DeleteArticle(w http.ResponseWriter, r *http.Request) {
-	Var := mux.Vars(r)	
-	id, _ := strconv.Atoi(Var["id"])
+func DeleteArticleById(c *gin.Context) {
+	id := c.Param("id")
+	err := connection.DB.Delete(&models.Article{}, id).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "Internal Server Error", "errors": "Failed delete   article"})
+		return
+	}
 
-	connection.DB.Delete(&models.Article{}, id)
-	
-	Response["data"] = nil
-	Response["status_code"] = 200
-	Response["message"] = "Article has been deleted successfuly!"
-
-	json.NewEncoder(w).Encode(Response)
-	return
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Article deleted successfully"})
 }

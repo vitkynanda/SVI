@@ -1,13 +1,12 @@
 import React from "react";
-import Header from "../components/UI/Header";
+import Layout from "../components/Layout";
 import AddNewPost from "../components/AddNewPost";
 
 const AddNew = () => {
   return (
-    <div className="w-5/6">
-      <Header title="Add New Post" />
+    <Layout title="Add New Posts">
       <AddNewPost />
-    </div>
+    </Layout>
   );
 };
 

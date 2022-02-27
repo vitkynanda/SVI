@@ -19,6 +19,12 @@ const PostForm = () => {
   const { mutate } = useMutation((postData) => postArticle(postData), {
     onSuccess: (post) => {
       queryClient.invalidateQueries("getAllArticle");
+      setPostInput({
+        title: "",
+        content: "",
+        category: "",
+        status: "",
+      });
       toast.success(
         `${
           post.status === "Published" ? "Published" : "Add to draft"

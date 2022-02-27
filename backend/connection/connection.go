@@ -1,6 +1,9 @@
 package connection
 
 import (
+	"fmt"
+	"go-api/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -16,4 +19,9 @@ func Connect() {
 	if err != nil {
 		panic("failed to connect database")
 	}
+
+	fmt.Println("Connection success")
+
+	DB.AutoMigrate(&models.Article{})
+	
 }

@@ -1,15 +1,14 @@
 import React from "react";
-import Header from "../components/UI/Header";
+import Layout from "../components/Layout";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import PreviewIcon from "@mui/icons-material/Preview";
 import { useNavigate } from "react-router-dom";
 
-const Posts = () => {
+const Dashboard = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-5/6">
-      <Header title="Posts" />
+    <Layout title="Dashboard">
       <div className="grid grid-cols-3 gap-10 p-5">
         <div
           className="flex flex-col items-center justify-center cursor-pointer text-gray-700 bg-gray-100 space-y-2 hover:bg-gray-400 hover:text-white transition-all duration-300 border border-gray-300 rounded-lg h-32"
@@ -33,8 +32,8 @@ const Posts = () => {
           <PreviewIcon fontSize="large" />
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
-export default Posts;
+export default Dashboard;

@@ -1,5 +1,5 @@
 export const postArticle = async (data) => {
-  const response = await fetch("http://localhost:11000/article", {
+  const response = await fetch("http://localhost:8080/article", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -9,8 +9,8 @@ export const postArticle = async (data) => {
 
 export const updateArticleById = async (data) => {
   const { id } = data;
-  const response = await fetch(`http://localhost:11000/article/${id}`, {
-    method: "POST",
+  const response = await fetch(`http://localhost:8080/article/${id}`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
@@ -18,26 +18,22 @@ export const updateArticleById = async (data) => {
 };
 
 export const getArticleById = async (id) => {
-  const response = await fetch(`http://localhost:11000/article/${id}`, {
+  const response = await fetch(`http://localhost:8080/article/${id}`, {
     method: "GET",
   });
   return response.json();
 };
 
 export const getAllArticle = async (params) => {
-  const { limit, offset } = params;
-  const response = await fetch(
-    `http://localhost:11000/article/${limit}/${offset}`,
-    {
-      method: "GET",
-    }
-  );
+  const response = await fetch(`http://localhost:8080/articles`, {
+    method: "GET",
+  });
   return response.json();
 };
 
 export const deleteArticleById = async (id) => {
-  const response = await fetch(`http://localhost:11000/article/${id}/delete`, {
-    method: "POST",
+  const response = await fetch(`http://localhost:8080/article/${id}`, {
+    method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
   return response.json();

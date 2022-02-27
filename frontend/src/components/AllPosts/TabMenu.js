@@ -22,7 +22,7 @@ export default function TabMenu() {
               classNames(
                 "w-2/6 text-sm py-2  transition-all duration-300 relative rounded-l-sm",
                 selected
-                  ? "bg-blue-700 text-white"
+                  ? "bg-gray-400 text-white"
                   : "bg-gray-100  border border-gray-300"
               )
             }
@@ -35,15 +35,15 @@ export default function TabMenu() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "w-2/6 text-sm py-2 transition-all duration-300 relative ",
+                "w-2/6 text-sm py-2 transition-all duration-300 relative",
                 selected
-                  ? "bg-blue-700 text-white"
+                  ? "bg-gray-400 text-white"
                   : "bg-gray-100  border border-gray-300"
               )
             }
           >
             Drafts
-            <span className="absolute top-0  text-xs right-12 bg-gray-500 w-5 h-5 flex flex-col justify-center rounded-full text-white">
+            <span className="absolute top-0 text-xs right-12 bg-gray-500 w-5 h-5 flex flex-col justify-center rounded-full text-white">
               {data?.data?.filter((post) => post.status === "Drafts").length}
             </span>
           </Tab>
@@ -52,7 +52,7 @@ export default function TabMenu() {
               classNames(
                 "w-2/6 text-sm py-2 transition-all  duration-300 relative rounded-r-sm",
                 selected
-                  ? "bg-blue-700 text-white"
+                  ? "bg-gray-400 text-white"
                   : "bg-gray-100  border border-gray-300"
               )
             }

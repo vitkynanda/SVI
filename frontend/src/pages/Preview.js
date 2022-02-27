@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../components/UI/Header";
+import Layout from "../components/Layout";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { getAllArticle } from "../constants/api";
@@ -7,11 +7,10 @@ import PostCard from "../components/Preview/PostCard";
 
 const Preview = () => {
   const [params, setParams] = useState({
-    limit: 10,
-    offset: 0,
+    limit: 5,
     page: 1,
   });
-  const { data, isLoading } = useQuery(["getAllArtilce", params], () =>
+  const { data, isLoading } = useQuery(["getAllArtilce", params.page], () =>
     getAllArticle(params)
   );
 
@@ -23,8 +22,7 @@ const Preview = () => {
     <div />
   );
   return (
-    <div className="w-5/6">
-      <Header title="Preview" />
+    <Layout title="Preview">
       <div className="p-3">
         <div className="flex items-center space-x-5 justify-between mb-3">
           {renderLoading}
@@ -38,7 +36,6 @@ const Preview = () => {
                     return {
                       ...prev,
                       page: prev.page - 1,
-                      offset: (prev.page - 1) * prev.limit,
                     };
                   });
                 }
@@ -53,7 +50,6 @@ const Preview = () => {
                   return {
                     ...prev,
                     page: prev.page + 1,
-                    offset: (prev.page + 1) * prev.limit,
                   };
                 })
               }
@@ -71,7 +67,7 @@ const Preview = () => {
             ))}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
