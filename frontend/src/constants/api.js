@@ -31,9 +31,9 @@ export const getAllArticle = async (params) => {
   return response.json();
 };
 export const getArticleByPage = async (params) => {
-  const { page, limit } = params;
+  const { offset, limit } = params;
   const response = await fetch(
-    `http://localhost:8080/articles/${page}/${limit}`,
+    `http://localhost:8080/articles/${limit}/${offset}`,
     {
       method: "GET",
     }

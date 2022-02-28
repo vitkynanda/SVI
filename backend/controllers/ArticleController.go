@@ -6,6 +6,7 @@ import (
 	"go-api/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,24 +23,22 @@ func GetAllArticles(c *gin.Context) {
 }
 
 func PaginationPostedArticle(c *gin.Context) {
-	page, _ := strconv.Atoi(c.Param("page"))
-	limit, _ :=  strconv.Atoi(c.Param("limit"))
-
-	offset := (page-1) *limit
+	limit,_ := strconv.Atoi(c.Param("limit"))
+	offset, _ := strconv.Atoi(strings.Trim(c.Param("offset"), " "))
 
 	articles := []models.Article{}
+
+	fmt.Println("limit",limit)
+	fmt.Println("offset",offset)
 	
-	sql := "SELECT * FROM articles"
-	if page == 1 {
+	sql := "SELECT * FROM articles WHERE"
+	if offset == 0 {
 		sql = fmt.Sprintf("%s LIMIT %d", sql, limit)
 	} else {
 		sql = fmt.Sprintf("%s LIMIT %d , %d", sql, limit ,offset)
 	}
 
-	fmt.Println(sql)
-
-
-
+	
 	if err := connection.DB.Raw(sql).Scan(&articles).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "Internal Server Error", "errors": "Failed to find article"})
 		return
