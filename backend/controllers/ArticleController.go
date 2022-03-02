@@ -27,11 +27,8 @@ func PaginationPostedArticle(c *gin.Context) {
 	offset, _ := strconv.Atoi(strings.Trim(c.Param("offset"), " "))
 
 	articles := []models.Article{}
-
-	fmt.Println("limit",limit)
-	fmt.Println("offset",offset)
 	
-	sql := "SELECT * FROM articles WHERE"
+	sql := "SELECT * FROM articles"
 	if offset == 0 {
 		sql = fmt.Sprintf("%s LIMIT %d", sql, limit)
 	} else {
@@ -66,12 +63,30 @@ func CreateNewArticle(c *gin.Context) {
 	}
 	
 	if err := c.ShouldBindJSON(&article); err != nil {
-
 	errorMessages :=  []string{}
-	
+
 	for _, e :=  range err.(validator.ValidationErrors) {
-		errorMessage := fmt.Sprintf("Error on Filled %s, condition: %s", e.Field(), e.ActualTag())
+		tag := e.ActualTag()
+		field := e.Field()
+
+		if 	tag == "min" {
+			switch field {
+			case "Title":
+				tag = "minimum 20 characters"
+				break
+			case  "Content":
+				tag = "minimum 200 characters"
+				break
+			case  "Category":
+				tag = "minimum 3 characters"
+				break
+			}
+			
+		}
+
+		errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", field, tag)
 		errorMessages = append(errorMessages,  errorMessage)
+
 		}
 		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad request", "errors": errorMessages})
 		return
@@ -95,11 +110,29 @@ func UpdateArticle(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&article); err != nil {
 	errorMessages :=  []string{}
+	
 	for _, e :=  range err.(validator.ValidationErrors) {
-		errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", e.Field(), e.ActualTag())
+		tag := e.ActualTag()
+		field := e.Field()
+		if 	tag == "min" {
+			switch field {
+			case "Title":
+				tag = "minimum 20 characters"
+
+			case  "Content":
+				tag = "minimum 200 characters"
+
+			case  "Category":
+				tag = "minimum 3 characters"
+
+			}
+			
+		}
+
+		errorMessage := fmt.Sprintf("Error on Field %s, condition: %s", field, tag)
 		errorMessages = append(errorMessages,  errorMessage)
 		}
-		c.JSON(http.StatusOK, gin.H{"status": "bad request", "errors": errorMessages})
+		c.JSON(http.StatusBadRequest, gin.H{"status": "Bad request", "errors": errorMessages})
 		return
 	}
 

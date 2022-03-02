@@ -16,7 +16,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import routes from "../../constants/routes";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
 import { Collapse } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -70,12 +70,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 const Items = ({ route }) => {
   const [collapse, setCollapse] = React.useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <>
       <ListItem button onClick={() => setCollapse(!collapse)}>
         <div
-          onClick={() => route.path !== "/posts" && navigate(`${route.path}`)}
+          onClick={() =>
+            route.path !== "/posts" && router.push(`${route.path}`)
+          }
           className="flex justify-between w-full relative"
         >
           <div className="flex">
@@ -94,7 +96,7 @@ const Items = ({ route }) => {
 
       <Collapse in={collapse} timeout="auto" unmountOnExit>
         {route?.subroutes?.map((sub, id) => (
-          <ListItem button key={id} onClick={() => navigate(`${sub.path}`)}>
+          <ListItem button key={id} onClick={() => router.push(`${sub.path}`)}>
             <p>{sub.name}</p>
           </ListItem>
         ))}

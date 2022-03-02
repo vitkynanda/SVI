@@ -1,9 +1,8 @@
-import React from "react";
-import Layout from "../components/Layout";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
-import { getArticleByPage } from "../constants/api";
-import PostCard from "../components/Preview/PostCard";
+import { getArticleByPage } from "../../constants/api";
+import Layout from "../../components/Layout";
+import PostCard from "../../components/Preview/PostCard";
 import { Skeleton } from "@mui/material";
 
 const Preview = () => {
